@@ -3,19 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+  <link rel="stylesheet" href="./styles.css">
   <title>Ouath</title>
 </head>
 <body>
-  <form >
-    <input value="smr11122@outlook.com" placeholder="email" type="text">
-    <button onclick="send()">Send</button>
-  </form>
+  <div class="container">
+    <div class="card" onclick="setProvider('Google')">Google</div>
+    <div class="card" onclick="setProvider('Outlook')">Outlook</div>
+    <div class="card" onclick="setProvider('Yahoo')">Yahoo</div>
+    <div class="card" onclick="setProvider('MailRu')">MailRu</div>
+  </div>
   <script>
     var electron = require('electron');
-    function send() {
-      console.log('=====send', electron)
-      electron.ipcRenderer.send('submit')
+    function setProvider(provider) {
+      electron.ipcRenderer.send(provider)
     }
+    electron.ipcRenderer.on('login', (e, data) => {
+        document.getElementById('token').innerHTML = data
+        fetch('https://graph.microsoft.com/v1.0/me/messages', {
+    method: 'GET',
+    headers: {
+      'Host': 'https://graph.microsoft.com',
+      'Authorization': `Bearer ${x}`
+    },
+  }).then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    console.log('res_renderer', data)
+    
+    // win.webContents.send('login', data.access_token);
+  })
+    })
+    
+ 
   </script>
 </body>
 </html>
