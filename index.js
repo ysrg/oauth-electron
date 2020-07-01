@@ -86,7 +86,7 @@ function handleCallback(url) {
   }
 }
 
-function loadAut() {
+function loadProvider(provider) {
   
   // Build the OAuth consent page URL
   authWindow = new BrowserWindow({
@@ -127,12 +127,12 @@ function createWindow() {
       nodeIntegration: true,
     },
   });
-
+  win.webContents.openDevTools();
   // and load the index.html of the app.
   win.loadFile("index.html");
-  ipcMain.on('submit', e => {
+  ipcMain.on('set:provider', (e, provider) => {
     // win.loadURL('about:blank');
-    loadAut();
+    loadProvider(provider);
   });
   // authWindow.loadURL(authUrl);
   // authWindow.show();

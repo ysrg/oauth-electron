@@ -8,34 +8,14 @@
 </head>
 <body>
   <div class="container">
-    <div class="card" onclick="setProvider('Google')">Google</div>
-    <div class="card" onclick="setProvider('Outlook')">Outlook</div>
-    <div class="card" onclick="setProvider('Yahoo')">Yahoo</div>
-    <div class="card" onclick="setProvider('MailRu')">MailRu</div>
+    <div class="card">Google</div>
+    <div class="card">Outlook</div>
+    <div class="card">Yahoo</div>
+    <div class="card">MailRu</div>
+    <div id="token"></div>
   </div>
   <script>
-    var electron = require('electron');
-    function setProvider(provider) {
-      electron.ipcRenderer.send(provider)
-    }
-    electron.ipcRenderer.on('login', (e, data) => {
-        document.getElementById('token').innerHTML = data
-        fetch('https://graph.microsoft.com/v1.0/me/messages', {
-    method: 'GET',
-    headers: {
-      'Host': 'https://graph.microsoft.com',
-      'Authorization': `Bearer ${x}`
-    },
-  }).then(function(response) {
-    return response.json();
-  }).then(function(data) {
-    console.log('res_renderer', data)
-    
-    // win.webContents.send('login', data.access_token);
-  })
-    })
-    
- 
+    require('./app');
   </script>
 </body>
 </html>
