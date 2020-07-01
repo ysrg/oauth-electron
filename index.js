@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const fetch = require("node-fetch");
-
+const { ProviderManager, OutlookProvider } = require('./providers');
 let win, authWindow;
 var options = {
   // client_id: "173fe996-3a74-4d81-928c-7ac9d6f4994a",
@@ -25,7 +25,6 @@ function requestGithubToken(options, code) {
     var encodedValue = encodeURIComponent(oo[property]);
     formBody.push(encodedKey + "=" + encodedValue);
 }
-  console.log('---oo', formBody)
   fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
     qs: options,
     method: 'POST',
@@ -68,7 +67,6 @@ function handleCallback(url) {
   var code = raw_code && raw_code.length > 1 ? raw_code[0].slice(5) : null;
   
   var error = /\?error=(.+)\$/.exec(url);
-  console.log('=====', code)
 
   if (code || error) {
     // Close the browser if code found or error
@@ -107,13 +105,10 @@ function loadProvider(provider) {
   //   }
   // );
   authWindow.once('did-finish-load', () => {
-    console.log('wwwwwww')
     // Send Message
  })
   authWindow.webContents.on("did-navigate", function(event, url) {
-    // console.log("==will-navigate===", url);
     handleCallback(url);
-    // handleCallback(url);
   });
   authWindow.loadURL(authUrl);
   authWindow.show();
@@ -131,8 +126,9 @@ function createWindow() {
   // and load the index.html of the app.
   win.loadFile("index.html");
   ipcMain.on('set:provider', (e, provider) => {
-    // win.loadURL('about:blank');
-    loadProvider(provider);
+    // loadProvider(provider);
+    ProviderManager.assign(new OutlookProvider());
+    ProviderManager.openAuthWindow()
   });
   // authWindow.loadURL(authUrl);
   // authWindow.show();

@@ -1,6 +1,28 @@
 const path = require('path');
+const { OUTLOOK_AUTH_URL } = require('./constants');
+const { app, BrowserWindow, ipcMain } = require("electron");
 
-export class MainProviderManager {
+class MainProviderManager {
+  constructor() {
+    this.authUrl = null
+    this.authWindow = null
+    this.handleCallback = null
+  }
+
+  openAuthWindow() {
+    this.authWindow = new BrowserWindow({
+      width: 1200,
+      height: 900,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+    this.authWindow.webContents.on("did-navigate", (event, url) => {
+      this.handleCallback(url);
+    });
+    this.authWindow.loadURL(this.authUrl.href);
+    this.authWindow.show();
+  }
 
   assign = (obj) => {
     for (let i in obj) {
@@ -14,9 +36,10 @@ export class MainProviderManager {
 
 }
 
-export const ProviderManager = new MainProviderManager();
+exports.MainProviderManager = MainProviderManager;
+exports.ProviderManager = new MainProviderManager();
 
-export * from './googleProvider';
-export * from './yahooProvider';
-export * from './outlookProvider';
-export * from './mairuProvider';
+// export * from './googleProvider';
+// export * from './yahooProvider';
+exports.OutlookProvider = require('./OutlookProvider');
+// export * from './mairuProvider';

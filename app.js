@@ -1,8 +1,10 @@
 const electron = require('electron');
 
-function setProvider(provider) {
+function setProvider() {
   const cards = document.querySelectorAll('.card');
-  cards.forEach((item) => item.addEventListener('click', () => electron.ipcRenderer.send('set:provider', provider)))
+  cards.forEach((item) => {
+    item.addEventListener('click', () => electron.ipcRenderer.send('set:provider', item.textContent))
+  })
 }
 
 electron.ipcRenderer.on('login', (e, data) => {
