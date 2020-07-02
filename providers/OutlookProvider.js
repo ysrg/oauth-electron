@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-const { OUTLOOK_AUTH_URL, OUTLOOK_CLIENT_ID, OUTLOOK_REDIRECT_URI, OUTLOOK_TOKEN_URL, OUTLOOK_SCOPE } = require('./constants');
+const { OUTLOOK_AUTH_URL, OUTLOOK_CLIENT_ID, OUTLOOK_REDIRECT_URI, OUTLOOK_TOKEN_URL, OUTLOOK_SCOPE, OUTLOOK_MSG_API, OUTLOOK_HOST_API } = require('./constants');
 const fetch = require("node-fetch");
 
 const wnd = require('electron').BrowserWindow;
@@ -15,7 +15,7 @@ module.exports = class OutlookProvider {
 	}
 
 	requestOutlookToken = (code) => {
-	  fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+	  fetch(OUTLOOK_TOKEN_URL, {
 	    method: 'POST',
 	    headers: {
 	      'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
@@ -29,7 +29,7 @@ module.exports = class OutlookProvider {
 	  }).then(function(response) {
 	    return response.json();
 	  }).then(function(data) {
-	    wnd.getFocusedWindow().webContents.send('login', data.access_token);
+	    wnd.getFocusedWindow().webContents.send('login', { data: data.access_token, endpoint: OUTLOOK_MSG_API, host: OUTLOOK_HOST_API });
 		  // fetch(OUTLOOK_TOKEN_URL, {
 	  	//   method: 'POST',
 		  //   headers: {
