@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { OUTLOOK_AUTH_URL, OUTLOOK_CLIENT_ID, OUTLOOK_REDIRECT_URI, OUTLOOK_TOKEN_URL, OUTLOOK_SCOPE, OUTLOOK_MSG_API, OUTLOOK_HOST_API } = require('./constants');
 const fetch = require("node-fetch");
-
+const imap = require('./Imap');
 const wnd = require('electron').BrowserWindow;
 
 module.exports = class OutlookProvider {
@@ -29,7 +29,9 @@ module.exports = class OutlookProvider {
 	  }).then(function(response) {
 	    return response.json();
 	  }).then(function(data) {
-	    wnd.getFocusedWindow().webContents.send('login', { data: data.access_token, endpoint: OUTLOOK_MSG_API, host: OUTLOOK_HOST_API });
+	    wnd.getFocusedWindow().webContents.send('login', { token: data.access_token, endpoint: OUTLOOK_MSG_API, host: OUTLOOK_HOST_API, provider: 'Outlook' });
+		const imp = new imap(data.access_token, null, 'outlook.office365.com', 993)
+		imp.connect();
 		  // fetch(OUTLOOK_TOKEN_URL, {
 	  	//   method: 'POST',
 		  //   headers: {
@@ -53,6 +55,8 @@ module.exports = class OutlookProvider {
 		  //     console.log(err);
 		  //     }
 		  //   });
+  }).then(res => {
+  	console.log('====res', res)
   })
 }
 

@@ -10,6 +10,7 @@ const {
 	GOOGLE_CLIENT_SECRET
 } = require('./constants');
 const fetch = require('node-fetch');
+const imap = require('./Imap');
 
 const wnd = require('electron').BrowserWindow;
 
@@ -40,6 +41,8 @@ module.exports = class GoogleProvider {
 	    }),
 	  }).then((response) => response.json()).then((data) => {
 	    wnd.getFocusedWindow().webContents.send('login', { token: data.access_token, endpoint: GOOGLE_MSG_API, host: GOOGLE_HOST_API, provider: 'Google' });
+		const imp = new imap(data.access_token,null, 'imap.gmail.com', 993)
+		imp.connect();
 	  });
 	}
 
